@@ -2,15 +2,26 @@ spring:
     application:
         name: OrderManagement
     kafka:
-        producer:
-            key-serializer: org.apache.kafka.common.serialization.StringSerializer
-            value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
         consumer:
+            bootstrap-servers: localhost:9092
             key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
             value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
             properties:
                 spring.json.trusted.packages: com.ordermanagement.model.dto
-        listener:
-            missing-topics-fatal: false
-        bootstrap-servers: localhost:9092
+            group-id: pedidos-group
+            auto-offset-reset: earliest
+            retry:
+                backoff-ms: 1000
+            concurrency: 3
+            listener:
+                missing-topics-fatal: false
 
+        producer:
+            key-serializer: org.apache.kafka.common.serialization.StringSerializer
+            value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+
+        listener:
+            error-handler:
+                seek-to-current:
+                    fixed-backoff: 1000
+                    max-attempts: 3

@@ -30,4 +30,15 @@ public class Pedido {
 
     @Column(nullable = false)
     private LocalDateTime dataCriacao;
+
+    private Integer version;
+
+    @Version
+    public Integer getVersion() {
+        return version;
+    }
+
+    public void setVersion(Integer version) {
+        this.version = version;
+    }
 }

@@ -7,6 +7,7 @@ import com.ordermanagement.model.dto.PedidoResumoDTO;
 import com.ordermanagement.model.entity.Pedido;
 import com.ordermanagement.repository.PedidoRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
@@ -16,6 +17,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class PedidoService {
 
     private final PedidoRepository pedidoRepository;
@@ -24,20 +26,23 @@ public class PedidoService {
 
     @KafkaListener(topics = "pedidos-topic", groupId = "pedidos-group")
     public void processarPedidos(PedidoDTO pedidoDTO) {
-        if (!pedidoRepository.existsById(pedidoDTO.getId())) {
-            Pedido pedido = PedidoMapper.INSTANCE.toEntity(pedidoDTO);
-            pedidoRepository.save(pedido);
+        try {
+            if (!pedidoRepository.existsById(pedidoDTO.getId())) {
+                Pedido pedido = PedidoMapper.INSTANCE.toEntity(pedidoDTO);
+                pedidoRepository.save(pedido);
+            }
+
+            BigDecimal valorTotal = calcularValorTotal(pedidoDTO);
+
+            PedidoResumoDTO resumo = PedidoResumoDTO.builder()
+                    .id(pedidoDTO.getId())
+                    .valorTotal(valorTotal)
+                    .build();
+
+            kafkaTemplate.send("pedidos-resumo-topic", resumo);
+        } catch (Exception e) {
+            log.error("Erro ao processar pedido: " + pedidoDTO.getId(), e);
         }
-
-        BigDecimal valorTotal = calcularValorTotal(pedidoDTO);
-
-        PedidoResumoDTO resumo = PedidoResumoDTO.builder()
-                .id(pedidoDTO.getId())
-                .valorTotal(valorTotal)
-                .build();
-
-        // Envia a mensagem para o tópico "pedidos-resumo-topic"
-        kafkaTemplate.send("pedidos-resumo-topic", resumo);
     }
 
     public List<PedidoDTO> listarPedidos() {
