@@ -11,9 +11,7 @@ public interface PedidoMapper {
 
     PedidoMapper INSTANCE = Mappers.getMapper(PedidoMapper.class);
 
-    @Mapping(target = "itens", source = "itens")
     PedidoDTO toDTO(Pedido pedido);
 
-    @Mapping(target = "itens", source = "itens")
     Pedido toEntity(PedidoDTO pedidoDTO);
 }

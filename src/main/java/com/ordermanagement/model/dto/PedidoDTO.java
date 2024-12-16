@@ -17,4 +17,5 @@ public class PedidoDTO {
     private BigDecimal valorTotal;
     private List<PedidoProdutoDTO> itens;
     private LocalDateTime dataCriacao;
+    private Integer version;
 }
