@@ -1,8 +1,14 @@
 spring:
+    boot:
+        autoconfigure:
+            kafka:
+                version: 3.4.0
     application:
         name: OrderManagement
     datasource:
         url: jdbc:postgresql://localhost:5432/postgres
+        username: postgres
+        password: root
         driver-class-name: org.postgresql.Driver
         hikari:
             minimum-idle: 1
@@ -11,6 +17,7 @@ spring:
             open-in-view: false
             show-sql: true
     kafka:
+        version: 3.0.0
         consumer:
             bootstrap-servers: localhost:9092
             key-deserializer: org.apache.kafka.common.serialization.StringDeserializer

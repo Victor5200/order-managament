@@ -5,6 +5,7 @@ import com.ordermanagement.mapper.PedidoMapper;
 import com.ordermanagement.model.dto.PedidoDTO;
 import com.ordermanagement.model.dto.PedidoResumoDTO;
 import com.ordermanagement.model.entity.Pedido;
+import com.ordermanagement.model.enumerated.PedidoStatusEnum;
 import com.ordermanagement.repository.PedidoRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -113,14 +114,14 @@ class PedidoServiceTest {
 
         PedidoDTO pedidoDTO = new PedidoDTO();
         pedidoDTO.setId(1L);
-        pedidoDTO.setStatus("ATUALIZADO");
+        pedidoDTO.setStatus(PedidoStatusEnum.EM_ANDAMENTO);
         pedidoDTO.setItens(Arrays.asList());
         when(pedidoMapper.toDTO(pedidoAtualizado)).thenReturn(pedidoDTO);
 
         PedidoDTO result = pedidoService.atualizarPedido(1L, pedidoDTO);
 
         assertNotNull(result);
-        assertEquals("ATUALIZADO", result.getStatus());
+        assertEquals(PedidoStatusEnum.EM_ANDAMENTO, result.getStatus());
         verify(pedidoRepository, times(1)).save(any(Pedido.class));
     }
 
