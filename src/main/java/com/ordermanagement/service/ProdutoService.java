@@ -15,7 +15,8 @@ import java.util.List;
 public class ProdutoService {
 
     private final ProdutoRepository produtoRepository;
-    private final ProdutoMapper produtoMapper = ProdutoMapper.INSTANCE;
+
+    private final ProdutoMapper produtoMapper;
 
     public ProdutoDTO criarProduto(ProdutoDTO produtoDTO) {
         Produto produto = produtoMapper.toEntity(produtoDTO);
